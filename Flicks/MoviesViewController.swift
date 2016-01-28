@@ -9,6 +9,8 @@
 import UIKit
 import AFNetworking
 import EZLoadingActivity
+import MBProgressHUD
+
 
 class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -16,29 +18,20 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var movies: [NSDictionary]?
     
-  
+    var hud: MBProgressHUD?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         
         tableView.dataSource = self
         tableView.delegate = self
         
+        
+        
+        //show HUD
+        hud = MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
         let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
@@ -55,6 +48,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
+                            //hide HUD
+                            
+                            MBProgressHUD.hideHUDForView(self.view, animated: true)
                             
                             self.movies = responseDictionary["results"] as? [NSDictionary]
                             self.tableView.reloadData()

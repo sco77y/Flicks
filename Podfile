@@ -5,7 +5,8 @@ use_frameworks!
 
 target 'Flicks' do
     pod 'AFNetworking'
-pod 'EZLoadingActivity'
+    pod 'EZLoadingActivity'
+    pod 'MBProgressHUD'
 
 end
 
