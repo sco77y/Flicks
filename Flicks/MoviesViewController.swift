@@ -20,6 +20,10 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     
     var hud: MBProgressHUD?
     
+    var refreshControl: UIRefreshControl!
+    
+    var hidden: Bool?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -28,8 +32,23 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         tableView.dataSource = self
         tableView.delegate = self
         
+        // Initialize a UIRefreshControl
+        refreshControl = UIRefreshControl()
+     
+        refreshControl.addTarget(self, action: "didRefresh:", forControlEvents: UIControlEvents.ValueChanged)
+        
+        tableView.insertSubview(refreshControl, atIndex: 0)
+        
+        networkRequest()
         
         
+    }
+    
+    func didRefresh(refreshControl: UIRefreshControl) {
+        networkRequest()
+    }
+    
+    func networkRequest() {
         //show HUD
         hud = MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         
@@ -48,19 +67,19 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                     if let responseDictionary = try! NSJSONSerialization.JSONObjectWithData(
                         data, options:[]) as? NSDictionary {
                             NSLog("response: \(responseDictionary)")
-                            //hide HUD
                             
+                            //hide HUD
                             MBProgressHUD.hideHUDForView(self.view, animated: true)
                             
                             self.movies = responseDictionary["results"] as? [NSDictionary]
                             self.tableView.reloadData()
+                            self.refreshControl.endRefreshing()
                     }
                 }
         });
         task.resume()
-    
-    }
 
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -84,7 +103,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
         let posterPath = movie["poster_path"] as! String
-
+        
+    
         
         let baseUrl = "https://image.tmdb.org/t/p/w342"
         
