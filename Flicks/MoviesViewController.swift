@@ -23,11 +23,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
     var movies: [NSDictionary]?
     
     var hud: MBProgressHUD?
-    
     var refreshControl: UIRefreshControl!
-    
+    var endpoint : String!
     var hidden: Bool?
-    
     var filteredMovies: [NSDictionary]?
     
     override func viewDidLoad() {
@@ -81,7 +79,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
         hud = MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
-        let url = NSURL(string:"https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")
+        let url = NSURL(string:"https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
         let request = NSURLRequest(URL: url!)
         let session = NSURLSession(
             configuration: NSURLSessionConfiguration.defaultSessionConfiguration(),
@@ -133,27 +131,20 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
-        
         let movie = filteredMovies![indexPath.row]
         let title = movie["title"] as! String
         let overview = movie["overview"] as! String
-        let posterPath = movie["poster_path"] as! String
-        
-    
-        
-        let baseUrl = "https://image.tmdb.org/t/p/w342"
-        
-        
-        let imageUrl = NSURL(string: baseUrl + posterPath)
-        
-        
         
         cell.titleLabel.text = title
         cell.overviewLabel.text = overview
+    
+        
+        let baseUrl = "https://image.tmdb.org/t/p/w342"
+        if let posterPath = movie["poster_path"] as? String {
+        let imageUrl = NSURL(string: baseUrl + posterPath)
         cell.posterView.setImageWithURL(imageUrl!)
+        }
         
-        
-       
         print("row \(indexPath.row)")
         return cell
         
@@ -161,14 +152,26 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
     
     
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        let cell = sender as! UITableViewCell
+        let indexPath = tableView.indexPathForCell(cell)
+        let movie = movies![indexPath!.row]
+        
+        let detailViewController = segue.destinationViewController as! DetailViewController
+        detailViewController.movie = movie
+        
+        
+        
+        print("prepare for segue called")
+        
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
-    */
+    
 
 }
