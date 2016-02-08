@@ -27,6 +27,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
     var endpoint : String!
     var hidden: Bool?
     var filteredMovies: [NSDictionary]?
+    var selectedBackgroundView: UIView?
+  
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +46,6 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
         tableView.insertSubview(refreshControl, atIndex: 0)
         
         networkRequest()
-        
         
     }
     
@@ -149,7 +150,7 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
         return cell
         
     }
-    
+  
     
 
     
@@ -171,7 +172,12 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UISearchBar
         
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
+        
+        // Use a red color when the user selects the cell
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.grayColor()
+        cell.selectedBackgroundView = backgroundView
     }
-    
 
+    
 }
